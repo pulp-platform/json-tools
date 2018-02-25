@@ -62,6 +62,9 @@ class config(object):
         else:
             return config_number(config)
 
+    def dump_to_string(self):
+        return json.dumps(self.get_dict(), indent='  ')
+
 
 class config_object(config):
 
@@ -116,10 +119,16 @@ class config_object(config):
         self.set_from_list(name.split('/'), value)
 
     def get_dict(self, serialize=True):
-        result = OrderedDict()
+        if serialize:
+            result = {}
+        else:
+            result = OrderedDict()
         for key,value in self.items.items():
             result[key] = value.get_dict(serialize=serialize)
         return result
+
+    def get_items(self):
+        return self.items
 
 
 class config_array(config):
