@@ -19,7 +19,7 @@ BUILD_DIR = build
 
 CFLAGS += -std=gnu++11 -MMD -MP -O3 -g -Iinclude -fPIC
 
-SRCS = src/jsmn.c src/json.cpp
+SRCS = src/jsmn.cpp src/json.cpp
 
 OBJS = $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(patsubst %.c,$(BUILD_DIR)/%.o,$(SRCS)))
 
