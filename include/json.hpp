@@ -86,6 +86,7 @@ namespace js {
     config_string(jsmntok_t *tokens);
     config *get_from_list(std::vector<std::string> name_list);
     std::string get_str() { return value; }
+    int get_int() { return strtoll(value.c_str(), NULL, 0); }
 
   private:
     std::string value;
