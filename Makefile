@@ -1,12 +1,15 @@
+INSTALL_DIR ?= $(CURDIR)/install
+BUILD_DIR   ?= $(CURDIR)/build
+
 HEADER_FILES += $(shell find include -name *.hpp)
 HEADER_FILES += $(shell find include -name *.h)
 
 define declareInstallFile
 
-$(PULP_SDK_WS_INSTALL)/$(1): $(1)
+$(INSTALL_DIR)/$(1): $(1)
 	install -D $(1) $$@
 
-INSTALL_HEADERS += $(PULP_SDK_WS_INSTALL)/$(1)
+INSTALL_HEADERS += $(INSTALL_DIR)/$(1)
 
 endef
 
@@ -36,12 +39,14 @@ $(BUILD_DIR)/%.o: %.c
 $(BUILD_DIR)/libjson.a: $(OBJS)
 	ar -r $@ $^
 
-$(PULP_SDK_HOME)/install/ws/lib/libjson.a: $(BUILD_DIR)/libjson.a
+$(INSTALL_DIR)/lib/libjson.a: $(BUILD_DIR)/libjson.a
 	install -D $< $@
 
 header: $(INSTALL_HEADERS)
 
-build: $(PULP_SDK_HOME)/install/ws/lib/libjson.a
+build: $(INSTALL_DIR)/lib/libjson.a
 
 clean:
 	rm -rf $(BUILD_DIR)
+
+all: header build
