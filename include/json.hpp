@@ -46,6 +46,9 @@ namespace js {
     virtual config *get_from_list(std::vector<std::string> name_list) {
       return NULL;
     }
+    virtual std::map<std::string, config *> get_childs() {
+      return std::map<std::string, config *>();
+    }
     config *create_config(jsmntok_t *tokens, int *_size);
 
     std::map<std::string, config *> childs;
@@ -59,7 +62,7 @@ namespace js {
 
     config *get(std::string name);
     config *get_from_list(std::vector<std::string> name_list);
-    std::map<std::string, config *>* get_childs() { return &childs; }
+    std::map<std::string, config *> get_childs() { return childs; }
 
   };
 
