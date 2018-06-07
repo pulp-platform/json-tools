@@ -155,6 +155,9 @@ class config_array(config):
             result.append(elem.get_dict(serialize=serialize))
         return result
 
+    def get(self):
+        return self.elems
+
 
 class config_string(config):
 
