@@ -90,6 +90,7 @@ namespace js {
     config *get_from_list(std::vector<std::string> name_list);
     std::string get_str() { return value; }
     int get_int() { return strtoll(value.c_str(), NULL, 0); }
+    bool get_bool() { return strcmp(value.c_str(), "True") == 0 ||  strcmp(value.c_str(), "true") == 0; }
 
   private:
     std::string value;

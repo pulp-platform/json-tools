@@ -41,6 +41,9 @@ class config(object):
     def get(self, name):
         pass
 
+    def get_bool(self):
+        return False
+
     def get_elem(self, index):
         pass
 
@@ -49,6 +52,9 @@ class config(object):
 
     def get_from_list(self, name_list):
         pass
+
+    def merge(self, new_value):
+        return new_value
 
     def get_tree(self, config):
         if type(config) == list:
@@ -105,10 +111,15 @@ class config_object(config):
     def set_from_list(self, name_list, value):
         key = name_list.pop(0)
         if len(name_list) == 0:
-            self.items[key] = self.get_tree(value)
+            prev_value = self.items.get(key)
+            new_value = self.get_tree(value) 
+            if prev_value is not None:
+                self.items[key] = prev_value.merge(new_value)
+            else:
+                self.items[key] = new_value
         else:
             if self.items.get(key) is None:
-                self.items[key] = config_object({})
+                self.items[key] = config_object(OrderedDict())
             self.items[key].set_from_list(name_list, value)
 
 
@@ -158,6 +169,10 @@ class config_array(config):
     def get(self):
         return self.elems
 
+    def merge(self, new_value):
+        self.elems.append(new_value)
+        return self
+
 
 class config_string(config):
 
@@ -171,6 +186,9 @@ class config_string(config):
 
     def get(self):
         return self.value
+
+    def get_bool(self):
+        return self.value == 'True' or self.value == 'true'
 
     def get_dict(self, serialize=True):
         return self.value
@@ -208,3 +226,6 @@ class config_bool(config):
 
     def get_dict(self, serialize=True):
         return self.value
+
+    def get_bool(self):
+        return self.get()
