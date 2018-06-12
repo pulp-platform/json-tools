@@ -193,6 +193,9 @@ class config_string(config):
     def get_dict(self, serialize=True):
         return self.value
 
+    def get_int(self):
+        return int(self.get(), 0)
+
 
 class config_number(config):
 
@@ -209,6 +212,9 @@ class config_number(config):
 
     def get_dict(self, serialize=True):
         return self.value
+
+    def get_int(self):
+        return self.get()
 
 
 class config_bool(config):
