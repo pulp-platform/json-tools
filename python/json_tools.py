@@ -86,6 +86,8 @@ class config_object(config):
 
         result = None
         name_pos = 0
+
+        name = None
         for item in name_list:
             if item != "*" and item != "**":
                 name = item
