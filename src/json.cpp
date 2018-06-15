@@ -40,13 +40,6 @@ std::vector<std::string> split(const std::string& s, char delimiter)
    return tokens;
 }
 
-int js::config::get_int(std::string name)
-{
-  js::config *config = this->get(name);
-  if (config == NULL) return 0;
-  return config->get_int();
-}
-
 js::config *js::config::create_config(jsmntok_t *tokens, int *_size)
 {
   jsmntok_t *current = tokens;

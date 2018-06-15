@@ -39,7 +39,13 @@ namespace js {
 
     virtual std::string get_str() { return ""; }
     virtual int get_int() { return 0; }
-    virtual int get_int(std::string name);
+    virtual int get_int(std::string name)
+    {
+      js::config *config = this->get(name);
+      if (config == NULL) return 0;
+      return config->get_int();
+    }
+
     virtual config *get(std::string name) { return NULL; }
     virtual config *get_elem(int index) { return NULL; }
     virtual size_t get_size() { return 0; }
