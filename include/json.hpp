@@ -39,6 +39,7 @@ namespace js {
 
     virtual std::string get_str() { return ""; }
     virtual int get_int() { return 0; }
+    virtual int get_int(std::string name);
     virtual config *get(std::string name) { return NULL; }
     virtual config *get_elem(int index) { return NULL; }
     virtual size_t get_size() { return 0; }
