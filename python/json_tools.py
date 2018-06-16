@@ -35,6 +35,12 @@ class config(object):
     def get_str(self):
         pass
 
+    def get_child_str(self, name):
+        config = self.get(name)
+        if config is None:
+            return None
+        return config.get()
+
     def get_int(self):
         pass
 
@@ -43,6 +49,24 @@ class config(object):
 
     def get_bool(self):
         return False
+
+    def get_child_bool(self, name):
+        config = self.get(name)
+        if config is None:
+            return None
+        return config.get_bool()
+
+    def get_child_int(self, name):
+        config = self.get(name)
+        if config is None:
+            return None
+        return config.get_int()
+
+    def get_child_dict(self, name):
+        config = self.get(name)
+        if config is None:
+            return None
+        return config.get_dict()
 
     def get_elem(self, index):
         pass
