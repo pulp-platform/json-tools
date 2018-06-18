@@ -252,7 +252,7 @@ class config_array(config):
 
     def merge(self, new_value):
         if type(new_value) != config_array:
-            new_value = get_config([new_value.get_dict()])
+            new_value = config_array([new_value.get_dict()])
 
         for elem in new_value.elems:
             self.elems.append(elem)
