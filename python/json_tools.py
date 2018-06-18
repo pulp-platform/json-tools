@@ -22,24 +22,40 @@ import json
 from collections import OrderedDict
 import os
 
-def find_config(config, path=None, paths=None):
+def get_paths(path=None, paths=None):
   all_paths = os.environ['PULP_CONFIGS_PATH'].split(':')
   if paths is not None:
     all_paths = all_paths + paths
   if path is not None:
     all_paths = all_paths + [path]
+  return all_paths
 
-  for path in all_paths:
+
+
+def find_config(config, paths):
+
+  for path in paths:
     full_path = os.path.join(path, config)
     if os.path.exists(full_path):
       return full_path
 
   return None
 
+
+
 def import_config(config, interpret=False, path=None):
     return config_object(config, interpret, path)
 
-def import_config_from_file(file_path, interpret=False):
+
+
+def import_config_from_file(file_path, interpret=False, find=False, path=None):
+    if find:
+        paths = get_paths(path=path)
+        new_file_path = find_config(file_path, paths)
+        if new_file_path is None:
+            raise Exception("Didn't find JSON file from any specified path (file: %s, paths: %s)" % (file_path, ":".join(paths)))
+        file_path = new_file_path
+
     with open(file_path, 'r') as fd:
         config_dict = json.load(fd, object_pairs_hook=OrderedDict)
         return import_config(config_dict, interpret, path=os.path.dirname(file_path))
@@ -126,7 +142,7 @@ class config_object(config):
 
             if interpret and key == 'includes':
                 for include in value:
-                    self.merge(import_config_from_file(find_config(include, path), interpret))
+                    self.merge(import_config_from_file(include, interpret=interpret, find=True, path=path))
 
             else:
                 if self.items.get(key) is not None:
