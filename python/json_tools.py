@@ -20,14 +20,29 @@
 
 import json
 from collections import OrderedDict
+import os
 
-def import_config(config):
-    return config_object(config)
+def find_config(config, path=None, paths=None):
+  all_paths = os.environ['PULP_CONFIGS_PATH'].split(':')
+  if paths is not None:
+    all_paths = all_paths + paths
+  if path is not None:
+    all_paths = all_paths + [path]
 
-def import_config_from_file(file_path):
+  for path in all_paths:
+    full_path = os.path.join(path, config)
+    if os.path.exists(full_path):
+      return full_path
+
+  return None
+
+def import_config(config, interpret=False, path=None):
+    return config_object(config, interpret, path)
+
+def import_config_from_file(file_path, interpret=False):
     with open(file_path, 'r') as fd:
         config_dict = json.load(fd, object_pairs_hook=OrderedDict)
-        return import_config(config_dict)
+        return import_config(config_dict, interpret, path=os.path.dirname(file_path))
 
 
 class config(object):
@@ -80,11 +95,11 @@ class config(object):
     def merge(self, new_value):
         return new_value
 
-    def get_tree(self, config):
+    def get_tree(self, config, interpret=False, path=None):
         if type(config) == list:
             return config_array(config)
         elif type(config) == dict or type(config) == OrderedDict:
-            return config_object(config)
+            return config_object(config, interpret, path)
         elif type(config) == str:
             return config_string(config)
         elif type(config) == bool:
@@ -92,17 +107,41 @@ class config(object):
         else:
             return config_number(config)
 
-    def dump_to_string(self):
-        return json.dumps(self.get_dict(), indent='  ')
+    def get_string(self):
+        return self.dump_to_string()
+
+    def dump_to_string(self, indent='  '):
+        if indent is not None:
+            return json.dumps(self.get_dict(), indent=indent)
+        else:
+            return json.dumps(self.get_dict())
 
 
 class config_object(config):
 
-    def __init__(self, config):
+    def __init__(self, config, interpret=False, path=None):
         self.items = OrderedDict()
 
         for key, value in config.items():
-            self.items[key] = self.get_tree(value)
+
+            if interpret and key == 'includes':
+                for include in value:
+                    self.merge(import_config_from_file(find_config(include, path), interpret))
+
+            else:
+                if self.items.get(key) is not None:
+                    self.items[key] = self.items[key].merge(self.get_tree(value, interpret, path))
+                else:
+                    self.items[key] = self.get_tree(value, interpret, path)
+
+    def merge(self, new_value):
+        for key, value in new_value.items.items():
+            if self.items.get(key) is None:
+                self.items[key] = value
+            else:
+                self.items[key] = self.items[key].merge(value)
+
+        return self
 
     def get_from_list(self, name_list):
         if len(name_list) == 0:
@@ -196,7 +235,12 @@ class config_array(config):
         return self.elems
 
     def merge(self, new_value):
-        self.elems.append(new_value)
+        if type(new_value) != config_array:
+            new_value = get_config([new_value.get_dict()])
+
+        for elem in new_value.elems:
+            self.elems.append(elem)
+
         return self
 
 
