@@ -210,6 +210,26 @@ class config_object(config):
     def set(self, name, value):
         self.set_from_list(name.split('/'), value)
 
+    def user_set(self, key, value):
+
+        # In case the path is not absolute and does not contain *
+        # add it implicitly to let the user specify a property
+        # without having to put **/ at the beginning
+        if key[0] != '*' and key[0] != '/' and key.find('/') != -1:
+            key = '**/' + key
+
+        if key[0] == '/':
+            key = key[1:]
+
+        if key.find('/') != -1:
+            root, prop = key.rsplit('/', 1)
+            if self.get(root) is not None:
+                self.get(root).set(prop, value)
+            else:
+                self.set(key, value)
+        else:
+            self.set(key, value)
+
     def get_dict(self, serialize=True):
         if serialize:
             result = {}
