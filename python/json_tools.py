@@ -126,7 +126,7 @@ class config(object):
     def get_string(self):
         return self.dump_to_string()
 
-    def dump_to_string(self, indent='  '):
+    def dump_to_string(self, indent=2):
         if indent is not None:
             return json.dumps(self.get_dict(), indent=indent)
         else:
