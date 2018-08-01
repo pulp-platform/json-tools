@@ -1,3 +1,4 @@
+INSTALL ?= install
 INSTALL_DIR ?= $(CURDIR)/install
 BUILD_DIR   ?= $(CURDIR)/build
 
@@ -7,7 +8,7 @@ HEADER_FILES += $(shell find include -name *.h)
 define declareInstallFile
 
 $(INSTALL_DIR)/$(1): $(1)
-	install -D $(1) $$@
+	$(INSTALL) -D $(1) $$@
 
 INSTALL_HEADERS += $(INSTALL_DIR)/$(1)
 
@@ -40,7 +41,7 @@ $(BUILD_DIR)/libjson.a: $(OBJS)
 	ar -r $@ $^
 
 $(INSTALL_DIR)/lib/libjson.a: $(BUILD_DIR)/libjson.a
-	install -D $< $@
+	$(INSTALL) -D $< $@
 
 header: $(INSTALL_HEADERS)
 
