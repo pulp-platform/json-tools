@@ -133,6 +133,6 @@ namespace js {
 
   config *import_config_from_file(std::string config_path);
 
-};
+}
 
 #endif
