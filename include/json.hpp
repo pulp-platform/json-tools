@@ -46,11 +46,11 @@ namespace js {
       return config->get_int();
     }
 
-    virtual config *get(std::string name) { return NULL; }
-    virtual config *get_elem(int index) { return NULL; }
+    virtual config *get(std::string) { return NULL; }
+    virtual config *get_elem(int) { return NULL; }
     virtual size_t get_size() { return 0; }
     virtual bool get_bool() { return false; }
-    virtual config *get_from_list(std::vector<std::string> name_list) {
+    virtual config *get_from_list(std::vector<std::string>) {
       return NULL;
     }
     virtual std::map<std::string, config *> get_childs() {
