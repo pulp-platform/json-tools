@@ -42,7 +42,9 @@ set_target_properties(json PROPERTIES
 
 set(JSON_TOOLS_PYTHON_DIR ${CMAKE_CURRENT_SOURCE_DIR}/python/)
 set(JSON_TOOLS_PY_FILES 
-    ${JSON_TOOLS_PYTHON_DIR}/json_tools.py)
+    ${JSON_TOOLS_PYTHON_DIR}/json_tools.py
+    ${JSON_TOOLS_PYTHON_DIR}/__init__.py
+)
 
 set(JSON_TOOLS_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/)
 set(JSON_TOOLS_INCLUDE_FILES 
