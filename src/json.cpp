@@ -233,15 +233,15 @@ js::config *js::import_config_from_string(std::string config_str)
   jsmn_init(&parser);
   int nb_tokens = jsmn_parse(&parser, config_string, strlen(config_string), NULL, 0);
 
-  jsmntok_t tokens[nb_tokens];
+  std::vector<jsmntok_t> tokens(nb_tokens);
 
   jsmn_init(&parser);
-  nb_tokens = jsmn_parse(&parser, config_string, strlen(config_string), tokens, nb_tokens);
+  nb_tokens = jsmn_parse(&parser, config_string, strlen(config_string), &(tokens[0]), nb_tokens);
 
   char *str = strdup(config_string);
   for (int i=0; i<nb_tokens; i++)
   {
-    jsmntok_t *tok = &tokens[i];
+    jsmntok_t *tok = &(tokens[i]);
     tok->str = &str[tok->start];
     str[tok->end] = 0;
       //printf("%d %d %d %d: %s\n", tokens[i].type, tokens[i].start, tokens[i].end, tokens[i].size, tok->str);
@@ -249,6 +249,6 @@ js::config *js::import_config_from_string(std::string config_str)
 
 
 
-  return new js::config_object(tokens);
+  return new js::config_object(&(tokens[0]));
 }
 

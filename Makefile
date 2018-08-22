@@ -1,53 +1,48 @@
-INSTALL ?= install
+#
+# Copyright (C) 2018 ETH Zurich and University of Bologna and GreenWaves Technologies SAS
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Authors: Martin Croome, GreenWaves Technologies
+
 INSTALL_DIR ?= $(CURDIR)/install
+# TARGET_INSTALL_DIR ?= $(CURDIR)/install
 BUILD_DIR   ?= $(CURDIR)/build
+RELEASE_TYPE ?= Debug
+# propagate verbose for debugging
+VERBOSE ?= 0
 
-HEADER_FILES += $(shell find include -name *.hpp)
-HEADER_FILES += $(shell find include -name *.h)
+$(info #### Building in $(BUILD_DIR))
+$(info #### Release type is $(RELEASE_TYPE))
+$(info #### Installing to $(INSTALL_DIR))
+# $(info #### Installing target files to $(TARGET_INSTALL_DIR))
 
-define declareInstallFile
+MAKEFILE_DIR = $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
-$(INSTALL_DIR)/$(1): $(1)
-	$(INSTALL) -D $(1) $$@
+all: $(BUILD_DIR)/CMakeCache.txt
+	( cd $(BUILD_DIR) ; make all $(DBG_CMAKE) VERBOSE=$(VERBOSE) )
 
-INSTALL_HEADERS += $(INSTALL_DIR)/$(1)
-
-endef
-
-HEADER_FILES += $(shell find python -name *.py)
-
-$(foreach file, $(HEADER_FILES), $(eval $(call declareInstallFile,$(file))))
-
-
-BUILD_DIR = build
-
-CFLAGS += -std=gnu++11 -MMD -MP -O3 -g -Iinclude -fPIC
-
-SRCS = src/jsmn.cpp src/json.cpp
-
-OBJS = $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(patsubst %.c,$(BUILD_DIR)/%.o,$(SRCS)))
-
--include $(OBJS:.o=.d)
-
-$(BUILD_DIR)/%.o: %.cpp
-	@mkdir -p $(basename $@)
-	g++ $(CFLAGS) -o $@ -c $<
-
-$(BUILD_DIR)/%.o: %.c
-	@mkdir -p $(basename $@)
-	g++ $(CFLAGS) -o $@ -c $<
-
-$(BUILD_DIR)/libjson.a: $(OBJS)
-	ar -r $@ $^
-
-$(INSTALL_DIR)/lib/libjson.a: $(BUILD_DIR)/libjson.a
-	$(INSTALL) -D $< $@
-
-header: $(INSTALL_HEADERS)
-
-build: $(INSTALL_DIR)/lib/libjson.a
+install: $(BUILD_DIR)/CMakeCache.txt
+	( cd $(BUILD_DIR) ; make install $(DBG_CMAKE) VERBOSE=$(VERBOSE) )
 
 clean:
 	rm -rf $(BUILD_DIR)
 
-all: header build
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+$(BUILD_DIR)/CMakeCache.txt: $(BUILD_DIR)
+	( cd $(BUILD_DIR) ; \
+	  cmake -DCMAKE_BUILD_TYPE=$(RELEASE_TYPE) -DCMAKE_INSTALL_PREFIX=$(INSTALL_DIR) \
+		$(MAKEFILE_DIR) )
