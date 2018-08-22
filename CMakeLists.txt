@@ -20,6 +20,13 @@ cmake_minimum_required(VERSION 3.5)
 project(json-tools VERSION 1.0.0)
 set (CMAKE_CXX_STANDARD 11)
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "RelWithDebInfo"
+        CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
+        FORCE
+    )
+endif()
+
 add_library(json STATIC
     src/jsmn.cpp
     src/json.cpp
