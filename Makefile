@@ -26,7 +26,10 @@ VERBOSE ?= 0
 ifndef CMAKE
 HAS_CMAKE3 = $(shell which cmake3)
 ifeq '$(HAS_CMAKE3)' ''
+CMAKE = $(shell which cmake-3.3.0)
+ifeq '$(CMAKE)' ''
 CMAKE = cmake
+endif
 else
 CMAKE = cmake3
 endif
