@@ -19,7 +19,7 @@
 INSTALL_DIR ?= $(CURDIR)/install
 # TARGET_INSTALL_DIR ?= $(CURDIR)/install
 BUILD_DIR   ?= $(CURDIR)/build
-RELEASE_TYPE ?= Debug
+RELEASE_TYPE ?= RelWithDebInfo
 # propagate verbose for debugging
 VERBOSE ?= 0
 
