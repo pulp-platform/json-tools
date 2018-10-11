@@ -90,10 +90,20 @@ js::config *js::config::create_config(jsmntok_t *tokens, int *_size)
   return config;
 }
 
+
+void js::config::dump(std::string)
+{
+}
+
 js::config *js::config_string::get_from_list(std::vector<std::string> name_list)
 {
   if (name_list.size() == 0) return this;
   return NULL;
+}
+
+void js::config_string::dump(std::string)
+{
+  fprintf(stderr, "\"%s\"", this->value.c_str());
 }
 
 js::config *js::config_number::get_from_list(std::vector<std::string> name_list)
@@ -102,16 +112,56 @@ js::config *js::config_number::get_from_list(std::vector<std::string> name_list)
   return NULL;
 }
 
+void js::config_number::dump(std::string)
+{
+  fprintf(stderr, "\"%f\"", this->value);
+}
+
 js::config *js::config_array::get_from_list(std::vector<std::string> name_list)
 {
   if (name_list.size() == 0) return this;
   return NULL;
 }
 
+void js::config_array::dump(std::string indent)
+{
+  bool is_first = true;
+  fprintf(stderr, "[\n");
+  for (auto x: this->elems)
+  {
+    if (!is_first)
+      fprintf(stderr, ",\n");
+    x->dump(indent + "  ");
+    is_first = false;
+  }
+  fprintf(stderr, "\n%s]\n", indent.c_str());
+}
+
 js::config *js::config_bool::get_from_list(std::vector<std::string> name_list)
 {
   if (name_list.size() == 0) return this;
   return NULL;
+}
+
+void js::config_bool::dump(std::string)
+{
+  fprintf(stderr, "\"%s\"", this->value ? "true" : "false");
+}
+
+void js::config_object::dump(std::string indent)
+{
+  bool is_first = true;
+
+  fprintf(stderr, "{\n");
+  for (auto x: this->childs)
+  {
+    if (!is_first)
+      fprintf(stderr, ",\n");
+    fprintf(stderr, "%s  \"%s\": ", indent.c_str(), x.first.c_str());
+    x.second->dump(indent + "  ");
+    is_first = false;
+  }
+  fprintf(stderr, "\n%s}\n", indent.c_str());
 }
 
 js::config *js::config_object::get_from_list(std::vector<std::string> name_list)
@@ -252,3 +302,29 @@ js::config *js::import_config_from_string(std::string config_str)
   return new js::config_object(&(tokens[0]));
 }
 
+int js::config_object::get_child_int(std::string name)
+{
+  js::config *config = this->get(name);
+  if (config)
+    return config->get_int();
+  else
+    return 0;
+}
+
+bool js::config_object::get_child_bool(std::string name)
+{
+  js::config *config = this->get(name);
+  if (config)
+    return config->get_bool();
+  else
+    return 0;
+}
+
+std::string js::config_object::get_child_str(std::string name)
+{
+  js::config *config = this->get(name);
+  if (config)
+    return config->get_str();
+  else
+    return "";
+}

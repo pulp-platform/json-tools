@@ -37,7 +37,7 @@ namespace js {
 
   public:
 
-    virtual std::string get_str() { return ""; }
+    virtual std::string get_str() { return "NC"; }
     virtual int get_int() { return 0; }
     virtual int get_int(std::string name)
     {
@@ -46,6 +46,7 @@ namespace js {
       return config->get_int();
     }
 
+    virtual void dump(std::string indent="");
     virtual config *get(std::string) { return NULL; }
     virtual config *get_elem(int) { return NULL; }
     virtual size_t get_size() { return 0; }
@@ -53,6 +54,11 @@ namespace js {
     virtual config *get_from_list(std::vector<std::string>) {
       return NULL;
     }
+
+    virtual int get_child_int(std::string) { return 0; }
+    virtual bool get_child_bool(std::string) { return false; }
+    virtual std::string get_child_str(std::string) { return ""; }
+
     virtual std::map<std::string, config *> get_childs() {
       return std::map<std::string, config *>();
     }
@@ -71,6 +77,12 @@ namespace js {
     config *get_from_list(std::vector<std::string> name_list);
     std::map<std::string, config *> get_childs() { return childs; }
 
+    int get_child_int(std::string name);
+    bool get_child_bool(std::string name);
+    std::string get_child_str(std::string name);
+
+    void dump(std::string indent="");
+
   };
 
   class config_array : public config
@@ -83,6 +95,8 @@ namespace js {
     config *get_elem(int index) { return elems[index]; }
 
     size_t get_size() { return elems.size(); }
+
+    void dump(std::string indent="");
 
   private:
     std::vector<config *> elems;
@@ -99,6 +113,8 @@ namespace js {
     int get_int() { return strtoll(value.c_str(), NULL, 0); }
     bool get_bool() { return strcmp(value.c_str(), "True") == 0 ||  strcmp(value.c_str(), "true") == 0; }
 
+    void dump(std::string indent="");
+
   private:
     std::string value;
   };
@@ -112,6 +128,8 @@ namespace js {
     int get_int() { return (int)value; }
     config *get_from_list(std::vector<std::string> name_list);
 
+    void dump(std::string indent="");
+
   private:
     double value;
 
@@ -124,6 +142,8 @@ namespace js {
     config_bool(jsmntok_t *tokens);
     bool get_bool() { return (bool)value; }
     config *get_from_list(std::vector<std::string> name_list);
+
+    void dump(std::string indent="");
 
   private:
     bool value;
