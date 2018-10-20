@@ -67,6 +67,8 @@ class config(object):
         pass
 
     def get_child_str(self, name):
+        if type(self) != config_object:
+            return None
         config = self.get(name)
         if config is None:
             return None
