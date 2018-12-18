@@ -142,7 +142,7 @@ class config_object(config):
 
         for key, value in config.items():
 
-            if interpret and key == 'includes':
+            if interpret and key == 'includes' or key == 'includes2':
                 for include in value:
                     self.merge(import_config_from_file(include, interpret=interpret, find=True, path=path))
 
