@@ -47,8 +47,8 @@ def import_config(config, interpret=False, path=None):
     return config_object(config, interpret, path)
 
 
+def get_config_file(file_path, interpret=False, find=False, path=None):
 
-def import_config_from_file(file_path, interpret=False, find=False, path=None):
     if find:
         paths = get_paths(path=path)
         new_file_path = find_config(file_path, paths)
@@ -58,13 +58,20 @@ def import_config_from_file(file_path, interpret=False, find=False, path=None):
 
     with open(file_path, 'r') as fd:
         config_dict = json.load(fd, object_pairs_hook=OrderedDict)
-        return import_config(config_dict, interpret, path=os.path.dirname(file_path))
+        return config_dict
+
+def import_config_from_file(file_path, interpret=False, find=False, path=None):
+    config_dict = get_config_file(file_path, interpret, find, path)
+    return import_config(config_dict, interpret, path=os.path.dirname(file_path))
 
 
 class config(object):
 
-    def get_str(self):
-        pass
+    def get_str(self, name=None):
+        if name is None:
+            return None
+        else:
+            return self.get_child_str(name)
 
     def get_child_str(self, name):
         if type(self) != config_object:
@@ -151,6 +158,27 @@ class config_object(config):
                     self.items[key] = self.items[key].merge(self.get_tree(value, interpret, path))
                 else:
                     self.items[key] = self.get_tree(value, interpret, path)
+
+    def get_str(self, name):
+
+        config = self.get(name)
+        if config is None:
+            return None
+        return config.get()
+
+    def get_bool(self, name):
+
+        config = self.get(name)
+        if config is None:
+            return None
+        return config.get()
+
+    def get_int(self, name):
+
+        config = self.get(name)
+        if config is None:
+            return None
+        return config.get()
 
     def merge(self, new_value):
         for key, value in new_value.items.items():
