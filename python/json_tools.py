@@ -81,6 +81,9 @@ class config(object):
             return None
         return config.get()
 
+    def browse(self, callback, *kargs, **kwargs):
+        pass
+
     def get_int(self):
         pass
 
@@ -158,6 +161,11 @@ class config_object(config):
                     self.items[key] = self.items[key].merge(self.get_tree(value, interpret, path))
                 else:
                     self.items[key] = self.get_tree(value, interpret, path)
+
+    def browse(self, callback, *kargs, **kwargs):
+        callback(self, *kargs, **kwargs)
+        for key, value in self.items.items():
+            value.browse(callback, *kargs, **kwargs)
 
     def get_str(self, name):
 
@@ -284,6 +292,10 @@ class config_array(config):
         if len(name_list) == 0:
             return self
         return None
+
+    def browse(self, callback, *kargs, **kwargs):
+        for elem in self.elems:
+            elem.browse(callback, *kargs, **kwargs)
 
     def get_size(self):
         return len(self.elems)
