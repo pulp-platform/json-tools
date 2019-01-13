@@ -268,7 +268,7 @@ class config_object(config):
         else:
             self.set(key, value)
 
-    def get_dict(self, serialize=True):
+    def get_dict(self, serialize=False):
         if serialize:
             result = {}
         else:
@@ -303,7 +303,7 @@ class config_array(config):
     def get_elem(self, index):
         return self.elems[index]
 
-    def get_dict(self, serialize=True):
+    def get_dict(self, serialize=False):
         result = []
         for elem in self.elems:
             result.append(elem.get_dict(serialize=serialize))
@@ -338,7 +338,7 @@ class config_string(config):
     def get_bool(self):
         return self.value == 'True' or self.value == 'true'
 
-    def get_dict(self, serialize=True):
+    def get_dict(self, serialize=False):
         return self.value
 
     def get_int(self):
@@ -358,7 +358,7 @@ class config_number(config):
     def get(self):
         return self.value
 
-    def get_dict(self, serialize=True):
+    def get_dict(self, serialize=False):
         return self.value
 
     def get_int(self):
@@ -378,7 +378,7 @@ class config_bool(config):
     def get(self):
         return self.value
 
-    def get_dict(self, serialize=True):
+    def get_dict(self, serialize=False):
         return self.value
 
     def get_bool(self):
