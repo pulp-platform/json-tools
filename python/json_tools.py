@@ -21,6 +21,7 @@
 import json
 from collections import OrderedDict
 import os
+import sys
 
 def get_paths(path=None, paths=None):
   all_paths = os.environ['PULP_CONFIGS_PATH'].split(':')
@@ -30,6 +31,12 @@ def get_paths(path=None, paths=None):
     all_paths = all_paths + [path]
   return all_paths
 
+
+def is_string(config):
+    if sys.version_info >= (3,0,0):
+        return type(config) == str
+    else:
+        return type(config) == str or isinstance(config, unicode)
 
 
 def find_config(config, paths):
@@ -128,7 +135,7 @@ class config(object):
             return config_array(config)
         elif type(config) == dict or type(config) == OrderedDict:
             return config_object(config, interpret, path)
-        elif type(config) == str:
+        elif is_string(config):
             return config_string(config)
         elif type(config) == bool:
             return config_bool(config)
