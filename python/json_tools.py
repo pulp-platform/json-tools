@@ -81,9 +81,7 @@ class config(object):
             return self.get_child_str(name)
 
     def get_child_str(self, name):
-        if type(self) != config_object:
-            return None
-        config = self.get(name)
+        config = self.get_child(name)
         if config is None:
             return None
         return config.get()
@@ -95,6 +93,9 @@ class config(object):
         pass
 
     def get(self, name):
+        pass
+
+    def get_child(self, name):
         pass
 
     def get_bool(self):
@@ -159,7 +160,11 @@ class config_object(config):
 
         for key, value in config.items():
 
-            if interpret and key == 'includes' or key == 'includes2':
+            if interpret and (key == 'includes' or key == 'includes2' or key == 'include'):
+
+                if key == 'include':
+                    value = [value]
+
                 for include in value:
                     self.merge(import_config_from_file(include, interpret=interpret, find=True, path=path))
 
@@ -247,6 +252,9 @@ class config_object(config):
             if self.items.get(key) is None:
                 self.items[key] = config_object(OrderedDict())
             self.items[key].set_from_list(name_list, value)
+
+    def get_child(self, name):
+        return self.get(name)
 
 
     def get(self, name):
