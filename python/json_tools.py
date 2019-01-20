@@ -24,7 +24,12 @@ import os
 import sys
 
 def get_paths(path=None, paths=None):
-  all_paths = os.environ['PULP_CONFIGS_PATH'].split(':')
+
+  env_path = os.environ.get('SDK_CONFIGS_PATH')
+  if env_path is None:
+    env_path = os.environ.get('PULP_CONFIGS_PATH')
+
+  all_paths = env_path.split(':')
   if paths is not None:
     all_paths = all_paths + paths
   if path is not None:
