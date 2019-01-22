@@ -59,6 +59,9 @@ namespace js {
     virtual bool get_child_bool(std::string) { return false; }
     virtual std::string get_child_str(std::string) { return ""; }
 
+    virtual std::vector<config *> get_elems() {
+      return std::vector<config *> ();
+    }
     virtual std::map<std::string, config *> get_childs() {
       return std::map<std::string, config *>();
     }
@@ -92,6 +95,7 @@ namespace js {
     config_array(jsmntok_t *tokens, int *size=NULL);
     config *get_from_list(std::vector<std::string> name_list);
 
+    std::vector<config *> get_elems() { return elems; }
     config *get_elem(int index) { return elems[index]; }
 
     size_t get_size() { return elems.size(); }

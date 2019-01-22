@@ -85,6 +85,9 @@ class config(object):
         else:
             return self.get_child_str(name)
 
+    def set_from_list(self, name_list, value):
+        pass
+
     def get_child_str(self, name):
         config = self.get_child(name)
         if config is None:
@@ -245,8 +248,9 @@ class config_object(config):
         return result
 
     def set_from_list(self, name_list, value):
-        key = name_list.pop(0)
-        if len(name_list) == 0:
+
+        if len(name_list) == 1:
+            key = name_list.pop(0)
             prev_value = self.items.get(key)
             new_value = self.get_tree(value) 
             if prev_value is not None:
@@ -254,9 +258,28 @@ class config_object(config):
             else:
                 self.items[key] = new_value
         else:
-            if self.items.get(key) is None:
+            key = name_list[0]
+
+            if self.items.get(key) is not None:
+                name_list.pop(0)
+                self.items[key].set_from_list(name_list, value)
+            elif key in ['**', '*']:
+                next_key = name_list[1]
+                if self.items.get(next_key) is not None:
+                    name_list.pop(0)
+                    name_list.pop(0)
+                    self.items[next_key].set_from_list(name_list, value)
+                else:
+                    if key == '*':
+                        name_list.pop(0)
+
+                    for name, obj in self.items.items():
+                        obj.set_from_list(name_list.copy(), value)
+
+            else:
+                name_list.pop(0)
                 self.items[key] = config_object(OrderedDict())
-            self.items[key].set_from_list(name_list, value)
+                self.items[key].set_from_list(name_list, value)
 
     def get_child(self, name):
         return self.get(name)
@@ -313,6 +336,13 @@ class config_array(config):
             return self
         return None
 
+    def set_from_list(self, name_list, value):
+        if len(name_list) == 0:
+            self.merge(self.get_tree(value))
+        else:
+            for elem in self.elems:
+                elem.set_from_list(name_list, value)
+
     def browse(self, callback, *kargs, **kwargs):
         for elem in self.elems:
             elem.browse(callback, *kargs, **kwargs)
@@ -364,6 +394,9 @@ class config_string(config):
     def get_int(self):
         return int(self.get(), 0)
 
+    def set_from_list(self, name_list, value):
+        if len(name_list) == 0:
+            self.value = self.get_tree(value)
 
 class config_number(config):
 
@@ -384,6 +417,10 @@ class config_number(config):
     def get_int(self):
         return self.get()
 
+    def set_from_list(self, name_list, value):
+        if len(name_list) == 0:
+            self.value = self.get_tree(value)
+
 
 class config_bool(config):
 
@@ -403,3 +440,7 @@ class config_bool(config):
 
     def get_bool(self):
         return self.get()
+
+    def set_from_list(self, name_list, value):
+        if len(name_list) == 0:
+            self.value = self.get_tree(value)
