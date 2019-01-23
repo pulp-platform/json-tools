@@ -38,8 +38,8 @@ namespace js {
   public:
 
     virtual std::string get_str() { return "NC"; }
-    virtual int get_int() { return 0; }
-    virtual int get_int(std::string name)
+    virtual long long int get_int() { return 0; }
+    virtual long long int get_int(std::string name)
     {
       js::config *config = this->get(name);
       if (config == NULL) return 0;
@@ -114,7 +114,7 @@ namespace js {
     config_string(jsmntok_t *tokens);
     config *get_from_list(std::vector<std::string> name_list);
     std::string get_str() { return value; }
-    int get_int() { return strtoll(value.c_str(), NULL, 0); }
+    long long int get_int() { return strtoll(value.c_str(), NULL, 0); }
     bool get_bool() { return strcmp(value.c_str(), "True") == 0 ||  strcmp(value.c_str(), "true") == 0; }
 
     void dump(std::string indent="");
@@ -129,7 +129,7 @@ namespace js {
 
   public:
     config_number(jsmntok_t *tokens);
-    int get_int() { return (int)value; }
+    long long int get_int() { return (int)value; }
     config *get_from_list(std::vector<std::string> name_list);
 
     void dump(std::string indent="");
