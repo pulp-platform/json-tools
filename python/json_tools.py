@@ -160,6 +160,9 @@ class config(object):
         else:
             return json.dumps(self.get_dict())
 
+    def dump_help(self, name=None, root=None):
+        pass
+
 
 class config_object(config):
 
@@ -323,6 +326,22 @@ class config_object(config):
     def get_items(self):
         return self.items
 
+    def dump_help(self, name=None, root=None):
+        prop_help = self.items.get('help')
+        if prop_help is not None:
+          print ('')
+          print ('  ' + name + ' group:')
+          for key in prop_help.get_dict().keys():
+            full_name = key
+            if name is not None:
+              full_name = '%s/%s' % (name, key)
+            print ('    %-40s %s' % (full_name, prop_help.get_str(key)))
+
+        for key, prop in self.items.items():
+          full_name = key
+          if name is not None:
+            full_name = '%s/%s' % (name, key)
+          prop.dump_help(name=full_name)
 
 class config_array(config):
 
@@ -370,6 +389,11 @@ class config_array(config):
             self.elems.append(elem)
 
         return self
+
+    def dump_help(self, name=None, root=None):
+        for elem in self.elems:
+          elem.dump_help(name=name)
+
 
 
 class config_string(config):
