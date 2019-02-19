@@ -25,9 +25,11 @@ import sys
 
 def get_paths(path=None, paths=None):
 
-  env_path = os.environ.get('SDK_CONFIGS_PATH')
+  env_path = os.environ.get('BUILDER_CONFIGS_PATH')
   if env_path is None:
-    env_path = os.environ.get('PULP_CONFIGS_PATH')
+      env_path = os.environ.get('SDK_CONFIGS_PATH')
+      if env_path is None:
+        env_path = os.environ.get('PULP_CONFIGS_PATH')
 
   all_paths = env_path.split(':')
   if paths is not None:
