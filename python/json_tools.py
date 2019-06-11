@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# 
+#
 # Authors: Germain Haugou, ETH (germain.haugou@iis.ee.ethz.ch)
 #
 
@@ -70,7 +70,7 @@ def get_config_file(file_path, interpret=False, find=False, path=None):
             raise Exception("Didn't find JSON file from any specified path (file: %s, paths: %s)" % (file_path, ":".join(paths)))
         file_path = new_file_path
 
-    with open(file_path, 'r') as fd:
+    with open(file_path, 'r', encoding='utf-8') as fd:
         config_dict = json.load(fd, object_pairs_hook=OrderedDict)
         return config_dict
 
@@ -257,7 +257,7 @@ class config_object(config):
         if len(name_list) == 1:
             key = name_list.pop(0)
             prev_value = self.items.get(key)
-            new_value = self.get_tree(value) 
+            new_value = self.get_tree(value)
             if prev_value is not None:
                 self.items[key] = prev_value.merge(new_value)
             else:
