@@ -22,6 +22,7 @@ import json
 from collections import OrderedDict
 import os
 import sys
+import io
 
 def get_paths(path=None, paths=None):
 
@@ -70,7 +71,7 @@ def get_config_file(file_path, interpret=False, find=False, path=None):
             raise Exception("Didn't find JSON file from any specified path (file: %s, paths: %s)" % (file_path, ":".join(paths)))
         file_path = new_file_path
 
-    with open(file_path, 'r', encoding='utf-8') as fd:
+    with io.open(file_path, 'r', encoding='utf-8') as fd:
         config_dict = json.load(fd, object_pairs_hook=OrderedDict)
         return config_dict
 
